@@ -103,6 +103,7 @@ Do not dictate passwords, payment details, or sensitive information unless you a
 | Command | Description |
 | --- | --- |
 | `npm install` | Install project dependencies |
+| `npm test` | Check JavaScript syntax |
 | `npm start` | First-run Gemini setup if needed, then launch the app |
 | `npm run setup-gemini` | Replace and validate the Gemini API key |
 | `npm run start:app` | Launch Electron directly (use Settings if Gemini is not configured) |
