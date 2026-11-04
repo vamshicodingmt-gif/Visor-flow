@@ -73,7 +73,7 @@ async function refineTranscript(transcript) {
         }]
       },
       contents: [{ role: "user", parts: [{ text: transcript }] }],
-      generationConfig: { temperature: 0.2, maxOutputTokens: 2048 }
+      generationConfig: { maxOutputTokens: 2048 }
     }),
     signal: AbortSignal.timeout(30000)
   });
