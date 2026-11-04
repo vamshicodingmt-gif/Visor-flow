@@ -42,3 +42,6 @@ kbd { color: #c8cbd0; background: #242830; padding: 3px 5px; border-radius: 4px;
 .privacy-note { font-size: 9px; line-height: 1.5; color: #6f7681; margin: 8px 0 0; }
 footer { margin-top: auto; padding-top: 16px; text-align: center; color: #555c67; font-size: 8px; letter-spacing: 1.4px; }
 footer span { color: #d6ff62; padding: 0 4px; }
+
+.save-button:disabled { opacity: .55; cursor: wait; }
+.settings { margin-bottom: 4px; }
