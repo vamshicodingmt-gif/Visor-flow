@@ -7,7 +7,7 @@
   "license": "MIT",
   "scripts": {
     "start": "electron .",
-    "setup-gemini": "electron . --setup",
+    "setup-gemini": "electron .",
     "start:app": "electron .",
     "dist": "electron-builder",
     "install-app": "electron-builder",
@@ -62,5 +62,9 @@
   "engines": {
     "node": ">=20.19.0",
     "npm": ">=10.8.2"
+  },
+  "allowScripts": {
+    "electron": true,
+    "electron-winstaller": false
   }
 }
