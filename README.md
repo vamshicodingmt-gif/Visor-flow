@@ -1,23 +1,23 @@
 # Visor Flow
 
-**A desktop voice-to-text app you control.** Dictate into your workflow with a global shortcut, transcription, and automatic paste into the app you were using.
+**A desktop voice-to-text app with Gemini-powered cleanup.** Dictate into your workflow with a global shortcut, then let a lightweight model clean up the transcript before it is pasted into the app you were using.
 
-Visor Flow is an independent, open-source project inspired by the convenience of voice-first writing tools. It is not affiliated with Wispr Flow.
-
-> **Current MVP:** Electron desktop shell + OpenAI audio transcription. You supply your own OpenAI API key. Audio is sent to OpenAI's transcription API when you dictate; it is not processed locally in this MVP.
+Visor Flow is an independent, open-source project inspired by voice-first writing tools. It is not affiliated with Wispr Flow.
 
 ## Features
 
-- Floating, compact desktop control window.
-- Global shortcut: `Ctrl+Shift+Space` (Windows/Linux) or `Cmd+Shift+Space` (macOS) to start/stop dictation.
-- Records microphone audio and transcribes it with OpenAI's `gpt-4o-mini-transcribe` model.
-- Copies the transcript and pastes it into the previously focused app.
-- Keeps your API key in local app settings (Electron store).
-- Windows, macOS and Linux packaging configuration.
+- Floating desktop control window.
+- Global shortcut: `Ctrl+Shift+Space` (Windows/Linux) or `Cmd+Shift+Space` (macOS).
+- OpenAI audio transcription using `gpt-4o-mini-transcribe`.
+- Gemini text refinement using **`gemini-3.1-flash-lite`**.
+- Gemini corrects punctuation, capitalization, and obvious grammar while preserving the speaker's meaning, language, names, and numbers.
+- Copies the final text and attempts to paste it into the previously active app.
+- Gemini key is validated on setup and encrypted with Electron's `safeStorage` using the operating system's secure storage.
+- OpenAI key remains in the app's local settings.
 
-## Quick start (development)
+## Quick start
 
-Requirements: Node.js 20.19+ (or a current Node.js 22 LTS release), npm, and a microphone.
+Requirements: Node.js 20.19+ (or current Node.js 22 LTS), npm, and a microphone.
 
 ```bash
 git clone https://github.com/vamshicodingmt-gif/Visor-flow.git
@@ -26,60 +26,98 @@ npm install
 npm start
 ```
 
-The app opens as a small floating window. Paste an OpenAI API key into **Settings**, then save it. You can create an API key in the OpenAI developer dashboard.
+### First launch: Gemini API key
 
-## How to use
+On the first `npm start`, Visor Flow asks in the terminal:
 
-1. Launch Visor Flow.
-2. Open **Settings** and add your OpenAI API key.
-3. Return to the app where you want the words inserted.
-4. Press `Ctrl+Shift+Space` (Windows/Linux) or `Cmd+Shift+Space` (macOS), or click **Start dictation**.
-5. Speak naturally. Press the shortcut again or click **Stop & transcribe**.
-6. Visor Flow transcribes the recording, copies the text, and attempts to paste it into the previously active app.
+```text
+Visor Flow — Gemini setup
+Get a key from https://aistudio.google.com/app/apikey
+Enter your Gemini API key:
+```
 
-You can also click **Copy transcript** and paste manually if your operating system blocks simulated keyboard input.
+Paste your key and press Enter. Visor Flow checks the key against Google's Gemini API using `gemini-3.1-flash-lite`. If validation succeeds, the app opens and the key is encrypted and saved in the operating system's app-data folder. The terminal does not ask again on normal launches.
+
+To replace or validate a different Gemini key later:
+
+```bash
+npm run setup-gemini
+```
+
+If you launch an installed desktop build without using the terminal, you can also paste and verify the Gemini key in **Settings → Gemini API key** inside the app.
+
+Create a Gemini API key in [Google AI Studio](https://aistudio.google.com/app/apikey). Gemini API access and billing/rate limits are controlled by Google.
+
+## OpenAI transcription key
+
+The OpenAI key is separate from the Gemini key. Open **Settings → OpenAI API key** in the app and save it. The app uses OpenAI's transcription endpoint to convert microphone audio to text; Gemini then refines that text.
+
+## How to dictate
+
+1. Start Visor Flow.
+2. Add and save your OpenAI API key in Settings.
+3. Confirm Gemini shows **CONNECTED**. If not, run `npm run setup-gemini` or enter the key in Settings.
+4. Focus the app or text field where you want the words inserted.
+5. Press `Ctrl+Shift+Space` (Windows/Linux) or `Cmd+Shift+Space` (macOS), or click **Start dictation**.
+6. Speak, then press the shortcut again or click **Stop & transcribe**.
+7. Visor Flow transcribes the audio, asks Gemini to clean up the transcript, copies the final text, and attempts to paste it into the previous app.
+
+If Gemini is unavailable or returns an error, Visor Flow keeps the original OpenAI transcript and shows a warning. It does not discard the transcription.
 
 ## Build a desktop installer
 
-`npm install` installs project dependencies; it does not install a desktop app or create a desktop shortcut by itself. Build an installer with:
+`npm install` installs dependencies; it does not create a desktop shortcut by itself. Build an installer with:
 
 ```bash
 npm run install-app
 ```
 
-Or use `npm run dist`. Installers are written to the `release/` directory. On Windows, the NSIS installer creates Start Menu and desktop shortcuts. macOS produces a DMG and Linux produces AppImage/DEB packages. Platform packaging should be built on the target operating system for the most reliable result.
+Or:
+
+```bash
+npm run dist
+```
+
+Installers are written to `release/`. The Windows NSIS installer is configured to create Start Menu and desktop shortcuts. macOS builds a DMG; Linux builds AppImage and DEB packages. Build on the target operating system for the most reliable packaging.
 
 ## Platform notes
 
-- **Windows:** the app uses PowerShell to send Ctrl+V to the previously focused app. If that fails, use Copy transcript.
-- **macOS:** grant Visor Flow Accessibility permission when macOS asks, so it can send the paste shortcut. You may need to enable it under System Settings → Privacy & Security → Accessibility.
-- **Linux:** simulated paste uses `xdotool`; install it with your distribution's package manager. Wayland desktop environments may restrict global keyboard automation; manual copy/paste remains available.
-- Microphone access must be allowed by the operating system.
+- **Windows:** automatic paste uses PowerShell to send Ctrl+V.
+- **macOS:** grant Accessibility permission to Visor Flow so it can send the paste shortcut.
+- **Linux:** automatic paste uses `xdotool`; install it with your package manager. Wayland may restrict simulated keyboard input.
+- Microphone access must be allowed by the operating system. Manual **Copy text** remains available if automatic paste is blocked.
 
 ## Privacy and security
 
-- This MVP sends recorded audio to OpenAI for transcription. Review OpenAI's API terms and privacy documentation before use.
-- Your API key is stored in Electron's local application settings. Do not share your app data folder or logs with other people.
-- The transcript is placed on your system clipboard so it can be pasted into another application.
-- Visor Flow does not run a project-owned server and does not upload recordings to a Visor Flow backend.
-- Do not dictate passwords, payment details, or other sensitive information unless you are comfortable sending that audio to the configured transcription provider.
+- Audio recordings are sent to OpenAI for transcription.
+- The resulting transcript text is sent to Google's Gemini API for refinement.
+- The Gemini API key is encrypted using Electron `safeStorage` and the OS secure-storage backend. If secure storage is unavailable, Visor Flow refuses to save the key rather than writing it in plaintext.
+- The OpenAI API key is stored in Electron Store's local settings. Protect your operating-system account and app-data directory.
+- Final text is written to the system clipboard.
+- Visor Flow does not operate its own backend server.
 
-## Scripts
+Do not dictate passwords, payment details, or sensitive information unless you are comfortable sending the audio and transcript to the configured providers. See [Google's Gemini API documentation](https://ai.google.dev/gemini-api/docs) and [OpenAI's API documentation](https://platform.openai.com/docs).
+
+## Commands
 
 | Command | Description |
 | --- | --- |
-| `npm install` | Install dependencies |
-| `npm start` | Run the desktop app |
-| `npm run dist` | Package the app for the current platform |
-| `npm run install-app` | Alias for packaging an installer |
+| `npm install` | Install project dependencies |
+| `npm start` | First-run Gemini setup if needed, then launch the app |
+| `npm run setup-gemini` | Replace and validate the Gemini API key |
+| `npm run start:app` | Launch Electron directly (use Settings if Gemini is not configured) |
+| `npm run dist` | Package the current platform |
+| `npm run install-app` | Build the desktop installer |
 
-## Project layout
+## Project structure
 
 ```text
 Visor-flow/
 ├── electron/
 │   ├── main.cjs
 │   └── preload.cjs
+├── scripts/
+│   └── launch.cjs
 ├── src/
 │   ├── index.html
 │   ├── renderer.js
@@ -87,17 +125,9 @@ Visor-flow/
 ├── assets/
 │   └── icon.svg
 ├── package.json
-├── .gitignore
+├── README.md
 └── LICENSE
 ```
-
-## Roadmap
-
-- [ ] Offline transcription option.
-- [ ] Customizable shortcut and language selection.
-- [ ] Transcript history and per-app formatting.
-- [ ] More robust platform-specific paste integrations.
-- [ ] Signed installers and automatic updates.
 
 ## License
 
