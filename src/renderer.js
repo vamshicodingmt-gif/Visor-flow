@@ -7,6 +7,8 @@ const copyButton = $("copyButton");
 const micOrb = $("micOrb");
 const apiKeyInput = $("apiKey");
 const saveKeyButton = $("saveKey");
+const geminiKeyInput = $("geminiKey");
+const saveGeminiKeyButton = $("saveGeminiKey");
 let mediaRecorder = null;
 let audioChunks = [];
 let recording = false;
@@ -56,13 +58,16 @@ async function transcribeRecording() {
     const blob = new Blob(audioChunks, { type: mediaRecorder.mimeType || "audio/webm" });
     const bytes = await blob.arrayBuffer();
     const result = await window.visor.transcribe(bytes, blob.type);
-    showTranscript(result.text);
-    setStatus("Done — transcript pasted", "Your text is also on the clipboard.");
+    showTranscript(result);
+    if (result.warning) setStatus("Transcript ready — Gemini skipped", result.warning);
+    else setStatus(result.refined ? "Gemini refined your transcript" : "Transcript ready", "Your text was copied and pasted into the previous app.");
   } catch (error) {
     setStatus("Transcription failed", error.message || "Please try again.");
   }
 }
-function showTranscript(text) {
+function showTranscript(payload) {
+  const text = typeof payload === "string" ? payload : payload?.text;
+  if (!text) return;
   lastTranscript = text;
   transcriptEl.textContent = text;
   transcriptEl.classList.remove("empty");
@@ -86,6 +91,23 @@ saveKeyButton.addEventListener("click", async () => {
   }
 });
 $("closeButton").addEventListener("click", () => window.visor.minimize());
+saveGeminiKeyButton.addEventListener("click", async () => {
+  const key = geminiKeyInput.value.trim();
+  if (!key) { setStatus("Gemini key required", "Paste your Google AI Studio API key first."); return; }
+  saveGeminiKeyButton.disabled = true;
+  saveGeminiKeyButton.textContent = "Verifying…";
+  try {
+    await window.visor.saveGeminiKey(key);
+    geminiKeyInput.value = "";
+    $("geminiState").textContent = "CONNECTED";
+    setStatus("Gemini connected", "Gemini 3.1 Flash-Lite is ready to refine transcripts.");
+  } catch (error) {
+    setStatus("Gemini key was not saved", error.message || "Check the key and try again.");
+  } finally {
+    saveGeminiKeyButton.disabled = false;
+    saveGeminiKeyButton.textContent = "Verify & save";
+  }
+});
 window.visor.onShortcutToggle(() => recording ? stopRecording() : startRecording());
 window.visor.onTranscriptionComplete(showTranscript);
 
@@ -94,5 +116,7 @@ window.visor.onTranscriptionComplete(showTranscript);
   try {
     const key = await window.visor.getApiKey();
     $("keyState").textContent = key ? "KEY SAVED" : "API KEY NOT SET";
+    const geminiReady = await window.visor.geminiConfigured();
+    $("geminiState").textContent = geminiReady ? "CONNECTED" : "NOT SET";
   } catch (_) {}
 })();
