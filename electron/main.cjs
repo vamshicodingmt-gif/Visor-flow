@@ -130,7 +130,7 @@ function registerShortcut() {
   if (!globalShortcut.isRegistered(shortcut)) console.warn("Could not register global shortcut:", shortcut);
 }
 
-ipcMain.handle("window:hide", () => { if (mainWindow && !mainWindow.isDestroyed()) mainWindow.hide(); });
+ipcMain.handle("window:quit", () => { app.quit(); });
 ipcMain.handle("settings:get-key", () => store.get("openaiApiKey", ""));
 ipcMain.handle("settings:set-key", (_event, key) => {
   if (typeof key !== "string" || key.length > 300) throw new Error("Invalid OpenAI API key.");
