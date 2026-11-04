@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#101114">
+  <title>Visor Flow</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <div class="brand"><span class="brand-mark">V</span><div><strong>Visor Flow</strong><small>VOICE WORKSPACE</small></div></div>
+      <button id="closeButton" class="icon-button" aria-label="Close window">×</button>
+    </header>
+
+    <section class="hero">
+      <div class="eyebrow"><span class="pulse-dot"></span> READY WHEN YOU ARE</div>
+      <h1>Speak naturally.<br><span>Write everywhere.</span></h1>
+      <p>Turn your voice into clean text and send it to the app you were using.</p>
+    </section>
+
+    <section class="recorder">
+      <div id="micOrb" class="mic-orb"><span>●</span></div>
+      <div id="status" class="status" role="status">Ready to listen</div>
+      <div id="hint" class="hint">Use the shortcut or tap below</div>
+      <button id="recordButton" class="primary-button">Start dictation</button>
+      <div class="shortcut">GLOBAL SHORTCUT <kbd id="shortcutLabel">Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>Space</kbd></div>
+    </section>
+
+    <section class="transcript-panel">
+      <div class="panel-heading"><span>LAST TRANSCRIPT</span><button id="copyButton" class="text-button" disabled>Copy text</button></div>
+      <p id="transcript" class="transcript empty">Your words will appear here after transcription.</p>
+    </section>
+
+    <section class="settings">
+      <div class="panel-heading"><span>SETTINGS</span><span id="keyState" class="key-state">API KEY NOT SET</span></div>
+      <label for="apiKey">OpenAI API key</label>
+      <div class="key-row"><input id="apiKey" type="password" placeholder="sk-..." autocomplete="off"><button id="saveKey" class="save-button">Save</button></div>
+      <p class="privacy-note">Audio is sent to OpenAI for transcription. Your key is stored in this device's app settings.</p>
+    </section>
+    <footer>VISOR FLOW <span>·</span> YOUR VOICE, YOUR WORKFLOW</footer>
+  </main>
+  <script src="./renderer.js"></script>
+</body>
+</html>
