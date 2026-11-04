@@ -1,0 +1,36 @@
+{
+  "name": "visor-flow",
+  "version": "0.1.0",
+  "description": "A desktop voice-to-text app with global dictation shortcuts.",
+  "main": "electron/main.cjs",
+  "author": "Visor Flow contributors",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder",
+    "install-app": "electron-builder"
+  },
+  "devDependencies": {
+    "electron": "^35.0.0",
+    "electron-builder": "^26.0.12"
+  },
+  "dependencies": {
+    "electron-store": "^8.2.0"
+  },
+  "build": {
+    "appId": "com.visorflow.desktop",
+    "productName": "Visor Flow",
+    "directories": { "output": "release" },
+    "files": ["electron/**/*", "src/**/*", "assets/**/*", "package.json"],
+    "asar": true,
+    "win": { "target": ["nsis"] },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    },
+    "mac": { "target": ["dmg"] },
+    "linux": { "target": ["AppImage", "deb"], "category": "Utility" }
+  }
+}
