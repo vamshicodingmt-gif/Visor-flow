@@ -90,7 +90,7 @@ saveKeyButton.addEventListener("click", async () => {
     setStatus("Could not save key", error.message);
   }
 });
-$("closeButton").addEventListener("click", () => window.visor.minimize());
+$("closeButton").addEventListener("click", () => window.visor.quit());
 saveGeminiKeyButton.addEventListener("click", async () => {
   const key = geminiKeyInput.value.trim();
   if (!key) { setStatus("Gemini key required", "Paste your Google AI Studio API key first."); return; }
