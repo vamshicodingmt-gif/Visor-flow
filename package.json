@@ -10,7 +10,8 @@
     "setup-gemini": "node scripts/launch.cjs --setup",
     "start:app": "electron .",
     "dist": "electron-builder",
-    "install-app": "electron-builder"
+    "install-app": "electron-builder",
+    "test": "node --check scripts/launch.cjs && node --check electron/main.cjs && node --check electron/preload.cjs && node --check src/renderer.js"
   },
   "devDependencies": {
     "electron": "^35.0.0",
@@ -22,17 +23,39 @@
   "build": {
     "appId": "com.visorflow.desktop",
     "productName": "Visor Flow",
-    "directories": { "output": "release" },
-    "files": ["electron/**/*", "src/**/*", "scripts/**/*", "assets/**/*", "package.json"],
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "electron/**/*",
+      "src/**/*",
+      "scripts/**/*",
+      "assets/**/*",
+      "package.json"
+    ],
     "asar": true,
-    "win": { "target": ["nsis"] },
+    "win": {
+      "target": [
+        "nsis"
+      ]
+    },
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true
     },
-    "mac": { "target": ["dmg"] },
-    "linux": { "target": ["AppImage", "deb"], "category": "Utility" }
+    "mac": {
+      "target": [
+        "dmg"
+      ]
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ],
+      "category": "Utility"
+    }
   }
 }
