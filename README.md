@@ -17,7 +17,21 @@ Visor Flow is an independent, open-source project inspired by voice-first writin
 
 ## Quick start
 
-Requirements: Node.js 20.19+ (or current Node.js 22 LTS), npm, and a microphone.
+Requirements: Node.js 20.19+ (or current Node.js 22 LTS), npm, and a microphone. **Git is optional.**
+
+### Windows (PowerShell 5.1 or newer) — Git not required
+
+1. Install the current Node.js LTS from [nodejs.org](https://nodejs.org/en/download) (npm is included).
+2. Open a new PowerShell window.
+3. Run this one-line setup command:
+
+```powershell
+Set-ExecutionPolicy -Scope Process Bypass -Force; Invoke-WebRequest "https://raw.githubusercontent.com/vamshicodingmt-gif/Visor-flow/main/quick-start-windows.ps1" -OutFile "$env:TEMP\visor-flow-setup.ps1"; & "$env:TEMP\visor-flow-setup.ps1"
+```
+
+The script downloads the project ZIP directly from GitHub, installs dependencies, and starts Visor Flow. It does not require Git and does not overwrite an existing `Visor-flow` folder. If Node.js is missing, it tells you where to install it.
+
+### macOS / Linux or users who already have Git
 
 ```bash
 git clone https://github.com/vamshicodingmt-gif/Visor-flow.git
