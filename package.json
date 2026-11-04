@@ -1,12 +1,14 @@
 {
   "name": "visor-flow",
-  "version": "0.1.0",
-  "description": "A desktop voice-to-text app with global dictation shortcuts.",
+  "version": "0.2.0",
+  "description": "A desktop voice-to-text app with Gemini-powered text refinement.",
   "main": "electron/main.cjs",
   "author": "Visor Flow contributors",
   "license": "MIT",
   "scripts": {
-    "start": "electron .",
+    "start": "node scripts/launch.cjs",
+    "setup-gemini": "node scripts/launch.cjs --setup",
+    "start:app": "electron .",
     "dist": "electron-builder",
     "install-app": "electron-builder"
   },
@@ -21,7 +23,7 @@
     "appId": "com.visorflow.desktop",
     "productName": "Visor Flow",
     "directories": { "output": "release" },
-    "files": ["electron/**/*", "src/**/*", "assets/**/*", "package.json"],
+    "files": ["electron/**/*", "src/**/*", "scripts/**/*", "assets/**/*", "package.json"],
     "asar": true,
     "win": { "target": ["nsis"] },
     "nsis": {
