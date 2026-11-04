@@ -16,5 +16,5 @@ contextBridge.exposeInMainWorld("visor", {
     ipcRenderer.on("transcription-complete", listener);
     return () => ipcRenderer.removeListener("transcription-complete", listener);
   },
-  minimize: () => ipcRenderer.invoke("window:hide")
+  quit: () => ipcRenderer.invoke("window:quit")
 });
