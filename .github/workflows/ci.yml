@@ -1,18 +1,59 @@
-name: CI
+name: CI and Windows desktop build
 
 on:
   push:
     branches: [main]
   pull_request:
     branches: [main]
+  workflow_dispatch:
 
 jobs:
-  syntax:
-    runs-on: ubuntu-latest
+  test:
+    name: Test on ${{ matrix.os }} / Node ${{ matrix.node }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        node: ['20.19.0', '22', '24']
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: ${{ matrix.node }}
       - run: npm install
       - run: npm test
+
+  windows-installer:
+    name: Build and smoke-test Windows desktop app
+    if: github.event_name != 'pull_request'
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install dependencies
+        run: npm install
+      - name: Run syntax tests
+        run: npm test
+      - name: Build Windows installer
+        run: npm run dist -- --win nsis
+      - name: Launch packaged app and verify its window opens
+        shell: pwsh
+        run: |
+          $app = Join-Path $PWD 'release\win-unpacked\Visor Flow.exe'
+          if (-not (Test-Path $app)) { throw "Packaged app executable not found: $app" }
+          $process = Start-Process -FilePath $app -PassThru
+          Start-Sleep -Seconds 12
+          $process.Refresh()
+          if ($process.HasExited) { throw "Visor Flow exited during startup (code $($process.ExitCode))." }
+          if ($process.MainWindowHandle -eq 0) { throw "Visor Flow process started but no visible main window was detected." }
+          Stop-Process -Id $process.Id -Force
+      - name: Upload Windows installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: Visor-Flow-Windows-Installer
+          path: release/Visor-Flow-Setup-*.exe
+          if-no-files-found: error
+          retention-days: 14
