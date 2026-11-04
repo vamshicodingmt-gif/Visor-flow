@@ -9,16 +9,18 @@ Visor Flow is an independent open-source project inspired by voice-first writing
 **Requirements:** Windows 10/11 (64-bit), Git, and Node.js 20.19+ (Node 22 LTS or Node 24 is recommended). npm is included with Node.js. You do not need to install Electron, Python, Visual Studio Build Tools, or a separate paste utility.
 
 1. Open PowerShell in the folder where you want the project.
-2. Run:
+2. If you already cloned an older copy, update it first with `git pull` from inside that folder. Do not run `git clone` over an existing folder.
+3. Run:
 
 ```powershell
 git clone https://github.com/vamshicodingmt-gif/Visor-flow.git
 cd Visor-flow
 npm install
+npm rebuild electron
 npm start
 ```
 
-**The Visor Flow desktop window should open.** The first launch does not ask for API keys in the terminal. Enter both keys inside the app's Settings section.
+**The Visor Flow desktop window should open.** `npm start` launches Electron directly; it does not run the old terminal Gemini bootstrap. `npm rebuild electron` ensures Electron's Windows executable is downloaded even if a previous npm install skipped its install script. The first launch does not ask for API keys in the terminal. Enter both keys inside the app's Settings section.
 
 If PowerShell says `npm` is not recognized, close and reopen PowerShell after installing Node.js. Confirm with `node -v` and `npm -v`.
 
