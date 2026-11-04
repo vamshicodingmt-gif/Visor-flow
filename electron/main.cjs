@@ -55,6 +55,8 @@ function registerShortcut() {
   }
 }
 
+ipcMain.handle("window:hide", () => { if (mainWindow && !mainWindow.isDestroyed()) mainWindow.hide(); });
+
 ipcMain.handle("settings:get-key", () => store.get("openaiApiKey", ""));
 ipcMain.handle("settings:set-key", (_event, key) => {
   if (typeof key !== "string" || key.length > 300) throw new Error("Invalid API key.");
