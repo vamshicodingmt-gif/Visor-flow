@@ -6,8 +6,8 @@
   "author": "Visor Flow contributors",
   "license": "MIT",
   "scripts": {
-    "start": "node scripts/launch.cjs",
-    "setup-gemini": "node scripts/launch.cjs --setup",
+    "start": "electron .",
+    "setup-gemini": "electron . --setup",
     "start:app": "electron .",
     "dist": "electron-builder",
     "install-app": "electron-builder",
@@ -37,7 +37,8 @@
     "win": {
       "target": [
         "nsis"
-      ]
+      ],
+      "artifactName": "Visor-Flow-Setup-${version}.${ext}"
     },
     "nsis": {
       "oneClick": false,
@@ -57,5 +58,9 @@
       ],
       "category": "Utility"
     }
+  },
+  "engines": {
+    "node": ">=20.19.0",
+    "npm": ">=10.8.2"
   }
 }
