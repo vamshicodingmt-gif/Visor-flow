@@ -2,6 +2,8 @@ const { contextBridge, ipcRenderer } = require("electron");
 
 contextBridge.exposeInMainWorld("visor", {
   getApiKey: () => ipcRenderer.invoke("settings:get-key"),
+  geminiConfigured: () => ipcRenderer.invoke("settings:gemini-status"),
+  saveGeminiKey: (key) => ipcRenderer.invoke("settings:set-gemini-key", key),
   saveApiKey: (key) => ipcRenderer.invoke("settings:set-key", key),
   transcribe: (audioBytes, mimeType) => ipcRenderer.invoke("transcribe", audioBytes, mimeType),
   onShortcutToggle: (callback) => {
